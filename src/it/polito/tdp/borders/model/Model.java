@@ -3,6 +3,7 @@ package it.polito.tdp.borders.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +19,12 @@ public class Model {
 	private Graph<Country, DefaultEdge> graph ;
 	private List<Country> countries ;
 	private Map<Integer,Country> countriesMap ;
-	
+	Simulatore sim ;
 	public Model() {
+		
 		this.countriesMap = new HashMap<>() ;
-
+        this.sim = new Simulatore();
+		
 	}
 	
 	public void creaGrafo(int anno) {
@@ -53,4 +56,36 @@ public class Model {
 		return list ;
 	}
 
+	public List<Country> getCountries() {
+
+		List<Country> result =  new LinkedList<>(this.countriesMap.values());
+		Collections.sort(result);
+		return result;
+
+		
+	}
+
+	public void simula(Country partenza) {
+		
+		
+		sim.init(partenza, this.graph);
+		sim.run();
+		
+	}
+
+	public int getLastT() {
+		return sim.getT();
+	}
+
+	public List<CountryAndNumber> getListaPaesiStanziali(){
+		
+		List<CountryAndNumber> result =  new LinkedList<>();
+		Map<Country, Integer> stanziali = sim.getStanziali();
+		for(Country paese : stanziali.keySet())
+			result.add(new CountryAndNumber(paese, stanziali.get(paese)));
+		
+		Collections.sort(result);
+		return result;
+		
+	}
 }
